@@ -12,7 +12,8 @@ use agb::{
         tiled::{RegularBackgroundSize, TileFormat, TileSet, TileSetting},
         Priority,
     },
-    rng, syscall,
+    rng,
+    syscall::{self, wait_for_vblank},
 };
 use utils::abs;
 
@@ -27,27 +28,38 @@ fn main(mut gba: agb::Gba) -> ! {
     let (tiled, mut vram) = gba.display.video.tiled0();
 
     let mut bg = tiled.background(Priority::P0, RegularBackgroundSize::Background32x32);
+    let mut bg2 = tiled.background(Priority::P0, RegularBackgroundSize::Background32x32);
 
     let tileset = TileSet::new(tile_sheet::grass.tiles, TileFormat::FourBpp);
     vram.set_background_palettes(tile_sheet::grass.palettes);
 
     for y in 0..20u16 {
         for x in 0..30u16 {
-            let nb = abs(rng::gen() % 2) as u16;
-
             bg.set_tile(
                 &mut vram,
                 (x, y).into(),
                 &tileset,
-                TileSetting::new(nb, false, false, 0),
-            )
+                TileSetting::new(0, false, false, 0),
+            );
+
+            bg2.set_tile(
+                &mut vram,
+                (x, y).into(),
+                &tileset,
+                TileSetting::new(1, false, false, 0),
+            );
         }
     }
 
+    bg2.commit(&mut vram);
     bg.commit(&mut vram);
+
+    bg2.show();
     bg.show();
 
+    let v_blank = agb::interrupt::VBlank::get();
+
     loop {
-        syscall::halt();
+        v_blank.wait_for_vblank();
     }
 }

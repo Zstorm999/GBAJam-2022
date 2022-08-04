@@ -3,3 +3,4 @@ version = "1.0"
 [image.grass]
 filename = "tile_sheet.png"
 tile_size = "8x8"
+transparent_colour = "FF00FF"
