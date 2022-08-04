@@ -1,8 +1,8 @@
 [package]
-name = "agb_template"
+name = "gbajam22"
 version = "0.1.0"
 authors = [""]
-edition = "2018"
+edition = "2022"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
